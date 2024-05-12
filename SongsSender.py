@@ -5,9 +5,9 @@ import os
 import logging
 
 application = Application.builder().token("7059905901:AAGvPcM4lrGJjsuLiSyb_lmFjcw4mKWcsNo").build()
+directory = 'C:\\Users\\jezip\\Telegram-bot\\songdebug'
 
-
-async def spotDL(update: Update, context: ContextTypes):
+async def spotify_dl(update: Update, context: ContextTypes):
     if context.args:
         link = context.args[0]
         try:
@@ -16,19 +16,31 @@ async def spotDL(update: Update, context: ContextTypes):
             if update.message:
                 await update.message.reply_text(f"Error downloading track: {str(e)}")
             return
-        track_name = link.split('/')[-1]
-        if os.path.exists(track_name):
-            with open(track_name, "rb") as audio:
-                await update.message.reply_audio(audio)
-            os.remove(track_name)
+
+#============================================================================================================
+
+        def list_mp3_files(directory):
+            mp3_files = []
+            for root, dirs, files in os.walk(directory):
+                for file in files:
+                    if file.endswith('.mp3'):
+                        mp3_files.append(file)
+            return mp3_files
+
+        if __name__ == "__main__":
+          mp3_files = list_mp3_files(directory)
+          if mp3_files:
+            for track_name in mp3_files:
+              if os.path.exists(os.path.join(directory, track_name)):
+                with open(os.path.join(directory, track_name), "rb") as audio:
+                  await update.message.reply_audio(audio)
+                os.remove(os.path.join(directory, track_name))
+              else:
+                if update.message:
+                  await update.message.reply_text(f"Failed to find the track: {track_name}. Please try again.")
+          else:
             if update.message:
-                await update.message.reply_text("Your MP3 file has been uploaded!")
-        else:
-            if update.message:
-                await update.message.reply_text("Failed to download the track. Please try again later.")
-    else:
-        if update.message:
-            await update.message.reply_text("Please provide a link to download a track.")
+              await update.message.reply_text("No MP3 files found in the directory.")
 
 
 #============================================================================================================
@@ -49,8 +61,8 @@ async def log(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 #============================================================================================================
 
 
-application.add_handler(MessageHandler(filters.TEXT, log))
-spotify_dl_handler = CommandHandler("spotDL", spotDL)
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, log))
+spotify_dl_handler = CommandHandler("spotify_dl", spotify_dl)
 application.add_handler(spotify_dl_handler)
 if __name__ == "__main__":
     application.run_polling(allowed_updates=Update.ALL_TYPES)
