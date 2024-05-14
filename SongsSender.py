@@ -9,7 +9,7 @@ directory = 'C:\\Users\\jezip\\Telegram-bot\\songdebug'
 
 async def spotify_dl(update: Update, context: ContextTypes):
     if context.args:
-        link = context.args[0]
+        link = "-".join(context.args)
         try:
             subprocess.run(f'spotdl --output "C:/Users/jezip/Telegram-bot/songdebug" --bitrate 320K {link}', shell=True)
         except Exception as e:
@@ -25,6 +25,7 @@ async def spotify_dl(update: Update, context: ContextTypes):
                 for file in files:
                     if file.endswith('.mp3'):
                         mp3_files.append(file)
+
             return mp3_files
 
         if __name__ == "__main__":
@@ -62,7 +63,7 @@ async def log(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, log))
-spotify_dl_handler = CommandHandler("spotify_dl", spotify_dl)
+spotify_dl_handler = CommandHandler("d", spotify_dl)
 application.add_handler(spotify_dl_handler)
 if __name__ == "__main__":
     application.run_polling(allowed_updates=Update.ALL_TYPES)
