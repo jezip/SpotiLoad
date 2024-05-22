@@ -4,7 +4,7 @@ import subprocess
 import os
 import logging
 
-application = Application.builder().token("7059905901:AAGvPcM4lrGJjsuLiSyb_lmFjcw4mKWcsNo").build()
+application = Application.builder().token("").build()
 directory = 'C:\\Users\\jezip\\Telegram-bot\\songdebug'
 
 
