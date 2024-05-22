@@ -7,6 +7,12 @@ import logging
 application = Application.builder().token("7059905901:AAGvPcM4lrGJjsuLiSyb_lmFjcw4mKWcsNo").build()
 directory = 'C:\\Users\\jezip\\Telegram-bot\\songdebug'
 
+
+async def welcome(update: Update, context: ContextTypes):
+  message = "Welcome to @SpotiLoadMusicBot\nUse /d [link] to download your desired track.\nThe bot also supports track recognition by title."
+  await update.message.reply_text(message)
+
+
 async def spotify_dl(update: Update, context: ContextTypes):
     if context.args:
         link = "-".join(context.args)
@@ -62,6 +68,8 @@ async def log(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 #============================================================================================================
 
 
+welcome_handler = CommandHandler("start", welcome)
+application.add_handler(welcome_handler)
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, log))
 spotify_dl_handler = CommandHandler("d", spotify_dl)
 application.add_handler(spotify_dl_handler)
